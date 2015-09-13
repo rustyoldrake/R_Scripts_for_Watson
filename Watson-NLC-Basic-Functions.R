@@ -23,8 +23,8 @@ library(splitstackshape)
 ######### Housekeeping And Authentication 
 setwd("/Users/ryan/Documents/Project Daisy")
 base_url = "https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/"
-username = "abc123-####-####-YOUR-CREDS-HERE" #### BE VERY CAREFUL TO GET THE "Instantiating Credentials" from bound service and not the "Service Credentials"
-password = "123456789ABC"  # you need your own
+username = "abc123-####-####-YOUR-CREDS-HERE" #### BE VERY CAREFUL TO understand "Instantiating Credentials" from bound service vs "Service Credentials"
+password = "123456789ABC"  # you need your own ## if you are having authentication issues , may need the other creds.
 username_password = paste(username,":",password)
 
 ## Next - let's create all the functions (but not actually execute them just yet)
