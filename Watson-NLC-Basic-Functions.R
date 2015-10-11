@@ -20,6 +20,11 @@ library(splitstackshape)
 ## and (3) Credentials to that Service and confirm you're able to CURL service with
 ## curl -u "<username>":"<password>" "https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers"
 
+# PROBLEM > If you get this > Error in function (type, msg, asError = TRUE)  :  SSL certificate problem: self signed certificate in certificate chain 
+# SOLUTION then you need to do this > YOU MUST KEEP THIS IN FOR below to work To begin: this line sets CERT Global to make a CA Cert go away - http://stackoverflow.com/questions/15347233/ssl-certificate-failed-for-twitter-in-r
+options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"),httpauth=AUTH_BASIC)) # NOTE - the "httpauth=AUTH_BASIC" piece gets rid of the "Error: UNAUTHORIZED" message 
+
+
 ######### Housekeeping And Authentication 
 setwd("/Users/ryan/Documents/Project Daisy")
 base_url = "https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/"
