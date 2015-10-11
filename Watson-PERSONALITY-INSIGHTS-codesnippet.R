@@ -12,6 +12,11 @@
 library(RCurl) # install.packages("RCurl") # if the package is not already installed
 library(httr)
 
+# PROBLEM > If you get this > Error in function (type, msg, asError = TRUE)  :  SSL certificate problem: self signed certificate in certificate chain 
+# SOLUTION then you need to do this > YOU MUST KEEP THIS IN FOR below to work To begin: this line sets CERT Global to make a CA Cert go away - http://stackoverflow.com/questions/15347233/ssl-certificate-failed-for-twitter-in-r
+options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"),httpauth=AUTH_BASIC)) # NOTE - the "httpauth=AUTH_BASIC" piece gets rid of the "Error: UNAUTHORIZED" message 
+
+
 # Personality-Insights-Service-Blue - credentials"
 pi_url="https://gateway.watsonplatform.net/personality-insights/api/v2/profile"
 username = "5555555-5555-5555-5555-5555555555" # yours goes here from service credentials
