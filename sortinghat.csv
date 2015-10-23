@@ -2,7 +2,7 @@ I am brave	Gryffindor
 I have courage	Gryffindor	
 The founder of my house was Godric Gryffindor	Gryffindor	
 house element is fire	Gryffindor	
-Gryffindor values courage, bravery, nerve, and chivalry	Gryffindor	
+Gryffindor values courage  bravery  nerve  and chivalry	Gryffindor	
 Colors= Scarlet and Gold	Gryffindor	
 Lion	Gryffindor	
 I am bold and good	Gryffindor	
@@ -15,7 +15,7 @@ I am loyal	Hufflepuff
 I am a good friend	Hufflepuff	
 The founder of my house was Helga Hufflepuff	Hufflepuff	
 house element is earth	Hufflepuff	
-Hufflepuffs value hard work, patience, justice, and loyalty	Hufflepuff	
+Hufflepuffs value hard work  patience  justice  and loyalty	Hufflepuff	
 Yellow and Black	Hufflepuff	
 Badger	Hufflepuff	
 Loyal friend and helpful	Hufflepuff	
@@ -27,7 +27,7 @@ Smarts	Ravenclaw
 I have a big brain	Ravenclaw	
 The founder of my house was Rowena Ravenclaw	Ravenclaw	
 house element is air	Ravenclaw	
-Ravenclaw values intelligence, creativity, learning, and wit	Ravenclaw	
+Ravenclaw values intelligence  creativity  learning  and wit	Ravenclaw	
 Blue and Bronze	Ravenclaw	
 Eagle	Ravenclaw	
 Clever	Ravenclaw	
@@ -206,15 +206,15 @@ Godric Gryffindor	Gryffindor
 Helga Hufflepuff	Hufflepuff	
 Rowena Ravenclaw	Ravenclaw	
 Salazar Slytherin	Slytherin	
-Gryffindor values bravery, daring, nerve, and chivalry. Its emblematic animal is the lion and its colours are scarlet and gold.	Gryffindor	
-values hard work, dedication, patience, loyalty, and fair play	Hufflepuff	
-values intelligence, knowledge, and wit. Its emblematic animal is the eagle,	Ravenclaw	
-ambition, cunning and resourcefulness	Slytherin	
+Gryffindor values bravery  daring  nerve  and chivalry. Its emblematic animal is the lion and its colours are scarlet and gold.	Gryffindor	
+values hard work  dedication  patience  loyalty  and fair play	Hufflepuff	
+values intelligence  knowledge  and wit. Its emblematic animal is the eagle 	Ravenclaw	
+ambition  cunning and resourcefulness	Slytherin	
 resourceful	Gryffindor	Slytherin
 smart	Gryffindor	Ravenclaw
 I am a good friend who has courage	Hufflepuff	Gryffindor
 I am ambitious and resourceful	Gryffindor	Slytherin
-I am a bookworm, but also brave	Ravenclaw	Gryffindor
+I am a bookworm  but also brave	Ravenclaw	Gryffindor
 I am smart and also courageous	Ravenclaw	Gryffindor
 I am clever and crafty	Ravenclaw	Slytherin
 I like to hang out with my pals	Hufflepuff	Gryffindor
