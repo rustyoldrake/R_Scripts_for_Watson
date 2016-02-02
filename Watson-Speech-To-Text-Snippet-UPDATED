@@ -1,0 +1,129 @@
+######################################################
+### IBM Watson - SPEECH TO TEXT - Code Snippet - Revisited
+### Experimental Code. R Interface for IBM Watson Services
+### Focus: SPEECH TO TEXT - R Programming Language Interface
+### DOCS: https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/speech-to-text/
+### Before you begin you will need (1) An IBM Bluemix demo account (2) A Speech to Text App and (3) Credentials to that Service
+######################################################
+
+library(RCurl) # install.packages("RCurl") # if the package is not already installed
+library(httr)
+library(audio)
+
+# Speech-To-Text-Orange credentials" "RED": {
+url <- "https://stream.watsonplatform.net/speech-to-text/api"
+username <-"a530b62e-b5bb-406c-9cc3-GETYOURKEYON_BLUEMIX" # you need your own - STT service credentials from bluemix
+password <- "GETYOURKEY_BLUEMIX"  # you need your own - STT service credentials from bluemix
+username_password = paste(username,":",password,sep="")
+
+setwd("/Users/ryan/Documents/Service - Speech to Text (STT)")
+getwd()
+
+
+### FUNCTION to test connectivity and return models available
+watson.speech_to_text.getmodels <- function()
+{return(GET(url=paste(url,"/v1/models",sep=""),
+            authenticate(username,password)))}
+
+
+### FOR BEST RESULTS - USE USB HEADSET and ensure in MAc > Sys Preferences >Sound it's selected
+### FOR BEST RESULTS - USE USB HEADSET and ensure in MAc > Sys Preferences >Sound it's selected
+
+## FUNCTION - Record!  
+watson.STT.record <- function(samp_count,samp_rate)
+{
+  # record 8000 samples at 8000Hz (1 sec), mono (1 channel)
+  # record 64k samples at 16kHz (4 sec), mono (1 channel), stereo = 2
+  a <- record(samp_count, samp_rate, 2)
+  wait(a) # wait for the recording to finish
+  x <- a$data # get the result
+  x[1:10] # show first ten samples
+  close(a); rm(a) # you can close the instance at this point
+  # amplify and crop the signal
+  audio <- x * 2
+  audio[audio < -1] <- -1
+  audio[audio > 1] <- 1
+  return(audio)
+}
+
+
+## FUNCTION - Simple audio out test Function
+watson.STT.tonetest <- function()
+{
+  wait(play(sin(1:10000/32)))
+  wait(play(sin(1:10000/16)))
+  wait(play(sin(1:10000/8)))
+  wait(play(sin(1:10000/4)))
+  wait(play(sin(1:10000/2)))
+  wait(play(sin(1:10000/1)))
+}
+
+ 
+
+# command line call works: curl -u $USERNAME:$PASSWORD -H "content-type: audio/wav" --data-binary @"ryan_rasp_pi1.wav" "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
+
+
+#### FUNCTION TO TIDY UP the STT response - just export the TRANSCRIPT ONLY
+stt_transcript_only <- function(raw)
+{
+  data <- as.data.frame(strsplit(as.character(raw),"\\n"))
+  data <- data[c(7), ] # for now, grab just what we want
+  data <- paste(data) # kill levels, - fyi this nukes confidence % info (may want later)
+  data <- gsub("  ","",data) # remove excessive whitespace  0 cannot use ALL [[punct]] here
+  data <- gsub("\\\\","",data) # remove punct we dont like
+  data <- gsub("\"","",data) # remove punct we dont like
+  data <- gsub("transcript","",data) # remove excessive whitespace
+  data <- gsub(":","",data) # remove excessive whitespace - later: Improve this tidy step.
+  return(data)
+}
+
+
+###### FUNCTION - ANalyze AUDIO WAV file with IBM Watson Speech to Text service - SESSIONLESS
+watson.speech_to_text.recognize <- function(audio_file)
+{ return(POST(url=paste(url,"/v1/recognize",sep=""),
+              authenticate(username,password),
+              add_headers("Content-Type"="audio/wav"),
+              body = (file = upload_file(audio_file))  
+))} #works # hope this helps you with syntax!
+## this is SESSIONLESS MODE - https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
+
+
+######### OK - let's do stuff
+######### OK - let's do stuff
+
+watson.speech_to_text.getmodels() # returns list of 10+ models ##### works
+
+watson.STT.tonetest()  ## beeps? lucky you!
+
+######## Let's record some audio
+sample_count <- 64000  ## 0k samples
+sample_rate <- 16000 ## at 16khz - is ~5 seconds recording time
+
+
+##### BASIC FUNCTION FOR SPEECH TO TEXT - RETURNS TRANSCRIPT - SESSIONLESS
+watson.speech_to_text.sessionless <- function()
+{
+  wait(play(sin(1:5000/4)))  # recording START tone
+  print("RECORDING ------------------ (beep) ")
+  the_audio <- watson.STT.record(sample_count,sample_rate)
+  wait(play(sin(1:5000/2)))  # recording STOP tone
+  print("Recording COMPLETE --------- (beep) ")
+  print("Saving WAV File")
+  save.wave(the_audio,"the_audio.wav")
+  print("Calling IBM Watson Speech To Text API")
+  response <- watson.speech_to_text.recognize("the_audio.wav")
+  wait(play(sin(1:2500/16)))
+  wait(play(sin(1:2500/8)))
+  return(stt_transcript_only(content(response,"text")))
+}
+
+## LET'S GO!
+watson.speech_to_text.sessionless() #
+
+## Example output
+#[1] "RECORDING ------------------ (beep) "
+#[1] "Recording COMPLETE --------- (beep) "
+#[1] "Saving WAV File"
+#[1] "Calling IBM Watson Speech To Text API"
+#[1] "  there are seven gophers dancing on the roof making noise "
+
