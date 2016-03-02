@@ -50,7 +50,7 @@ base_url_TTS <- "https://stream.watsonplatform.net/text-to-speech/api/v1/synthes
 sample_count <- 64000  ## 64k fine for short - 128k for longer
 sample_count <- 128000  ## 64k fine for short - 128k for longer
 sample_rate <- 16000 ## at 16khz - is ~5 seconds recording time
-classifier_name <- "c7fa49x23-nlc-10030" # YOU WILL NEED TO PUT YOUR OWN IN HERE - RETURNED FROM TRAINING ABOVE!    
+classifier_name <- "c7fa49x23-nlc-XXXXX" # YOU WILL NEED TO PUT YOUR OWN IN HERE - RETURNED FROM TRAINING ABOVE!    
 
 ########## FUNCTION DECLARATIONS  #### FUNCTION DECLARATIONS ###########
 
