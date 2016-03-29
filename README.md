@@ -2,3 +2,7 @@
 R Scripts for Watson
 Experimental Scripts Written in R Programming Language, leveraging RCURL that Access the IBM Watson Services / APIs
 see: http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/ for services 
+
+This is VERY rough code - mostly proof of concept work - so not hardened
+
+The postings on this site are my own and don't necessarily represent IBM's position, strategies or opinions. Anyone is free to use, copy, distribute, modify or sell the source code here on GitHub and other materials directly linked from dreamtolearn.com and is provided "as is" without warranties. I am not responsible for any harm or damage caused to your computer, software or anything else caused by the material. (So handle with care :)
