@@ -61,6 +61,9 @@ watson.nlc.createnewclassifier <- function(file,classifiername) {
          authenticate(username,password),
          body = list(training_data = upload_file(file),
                      training_metadata = paste("{\"language\":\"en\",\"name\":",classifiername,"}",sep="") 
+                     ### IF YOU ARE GETTING METADATA ERRORS - MAY NEED TO QUOTIFY CLASSIFIER NAME
+                        ### training_metadata = paste("{\"language\":\"en\",\"name\":\"",classifiername,"\"}",sep="") # may come back
+
          )))}
 ###### end of function
 
