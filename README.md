@@ -12,4 +12,4 @@ The postings on this site are my own and don't necessarily represent IBM's posit
 Searching for SORTING HAT info?  Look here:  https://dreamtolearn.com/ryan/data_analytics_viz/98
 
 
-#    You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
