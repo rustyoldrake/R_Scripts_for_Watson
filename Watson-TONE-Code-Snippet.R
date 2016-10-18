@@ -20,10 +20,13 @@ setwd("/Users/ryan/Documents/Service - Tone Analyzer")
 getwd()
 source("keys.R")
 
-base_url_TON = "https://gateway.watsonplatform.net/tone-analyzer-beta/api"
+base_url_TON = "https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2016-05-19"
 
 ### GET - Basic Test 
-getURL("https://gateway.watsonplatform.net/tone-analyzer-beta/api/v3/tone?version=2016-02-11&text=hello",userpwd = username_password_TON ) 
+username_password_TON
+getURL("https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2016-05-19&text=hello",userpwd = username_password_TON ) 
+
+getURL("https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2016-05-19&text=A%20word%20is%20dead%20when%20it%20is%20said,%20some%20say.%20Emily%20Dickinson",userpwd = username_password_TON ) 
 
 ### Function to process output from API and table
 tidyResponse <- function(data)
@@ -50,7 +53,7 @@ tidyResponse <- function(data)
 ### POST - Basic Test
 process_data_to_tone <- function(text)
 {
-  response <- POST(url="https://gateway.watsonplatform.net/tone-analyzer-beta/api/v3/tone?version=2016-02-11",
+  response <- POST(url=base_url_TON,
                    authenticate(username_TON,password_TON),
                    add_headers("Content-Type"="text/plain","charset"="UTF-8"), 
                    body=text )
@@ -111,7 +114,7 @@ pie(slices, labels = lbls, main="Tone Analysis of Text \n SOCIAL-BIG-5")
 
 
 ### POST - Basic Test
-response <- POST(url="https://gateway.watsonplatform.net/tone-analyzer-beta/api/v3/tone?version=2016-02-11",
+response <- POST(url=base_url_TON,
                  authenticate(username_TON,password_TON),
                  add_headers("Content-Type"="text/plain","charset"="UTF-8"), 
                  body="happy but uncertain" )
