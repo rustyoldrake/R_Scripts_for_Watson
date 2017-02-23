@@ -100,7 +100,8 @@ tweets = clean.text(tweets)
 # later - deduplicate if you want (remove identical tweets, if desired)
 head(tweets)
 
-###############################  ALCHEMY - COMBINED CALL - RETREIVE AND STORE INFO
+###############################  ALCHEMY - COMBINED CALL - RETREIVE AND STORE INFO 
+  ### CAREFUL - DOES NOT HANDLE \ well (backslash in text no scrub - - need to fix)
 alchemy_url <- "http://gateway-a.watsonplatform.net/calls/text/"
 api_feature <- "TextGetCombinedData"
 api_key #check we got this from keys.R
