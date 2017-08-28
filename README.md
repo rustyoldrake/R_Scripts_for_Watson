@@ -14,3 +14,5 @@ Searching for SORTING HAT info?  Look here:  https://dreamtolearn.com/ryan/data_
 Sorting Hat CSV written by Lucy Anderson
 
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+https://github.com/rustyoldrake/R_Scripts_for_Watson/blob/master/bridges_r_to_watson_logo2.png
