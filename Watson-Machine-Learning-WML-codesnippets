@@ -1,0 +1,169 @@
+######################################################
+### IBM Watson - Code Snippet ---  WATSON MACHINE LEARNING (WML) + R BASIC SCRIPTS
+### Experimental Code. R Interface for IBM Watson Services
+### Reference Documentation:# http://watson-ml-api.mybluemix.net/
+# https://console.bluemix.net/catalog/services/machine-learning
+# https://datascience.ibm.com/blog/watson-machine-learning-general-availability/
+# https://github.com/IBMDataScience/R4WML  - with thanks to Davin Shearer's R4WML
+# https://console.bluemix.net/docs/#services/PredictiveModeling/index.html
+# http://watson-ml-api.mybluemix.net/
+#####################################################
+
+library(httr)
+library(splitstackshape) # for the text to colummns
+library(reshape2)
+
+######### Housekeeping And Authentication
+setwd("/Users/ryan/Documents/WML") # Set working Directory
+getwd()
+
+url_WML = "https://ibm-watson-ml.mybluemix.net"
+
+source("keys.r") ## KEYS has acutal username:password for each IBM service.
+# OK Display Our Keys and Info - should all be populated
+url_WML       # e.g. "https://ibm-watson-ml.mybluemix.net"
+username_WML  # e.g. "d921144d-99d2-489b-bbcb-XXXXXXXXX"
+password_WML  # e.g.  "4bc0063e-7310-4645-84af-XXXXXXXXXX"
+username_password_WML
+access_key_WML  # e.g. "XXXXXXXXXXoi6fdc+9e8WbZDM+ZZQyyRKoXWp9peVGRlM1cs7+kbuUrfI0sllpbpxSFKe9cZoFYLlzgPf++qpWZYcXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+instance_id_WML # e.g. "2aa3f5e0-51f5-4d02-bdbb-XXXXXXXXXX" # AKA Deployment ID?
+deployment_id_WML #
+version="v3"
+
+#1 -- TOKEN -- GET A TOKEN (And Confirm 200 Response)
+#Example of obtaining access token from Token Endpoint using HTTP Basic Auth (for details please refer to Token section below):
+#curl --basic --user username:password https://ibm-watson-ml.mybluemix.net/v3/identity/token
+response <- httr::GET(paste(url_WML,"/",version,"/identity/token",sep=""), httr::authenticate(username_WML, password_WML), encoding = 'UTF-8')
+httr::stop_for_status(req, 'authenticate with WatsonML')
+response  # 200 response?
+json <- jsonlite::fromJSON(httr::content(response, as = 'text', type = 'application/json', encoding = 'UTF-8'))
+token_WML <- json$token
+token_WML
+authorization_headers_WML <- httr::add_headers('Authorization' = paste('Bearer', get_wml_auth_token(paste0(url_WML, '/v3/identity/token'), username_WML, password_WML )))
+authorization_headers_WML
+
+#2 -- Service Instances -- GET INSTANCE IDS get /v3/wml_instances/{instance_id}
+#200 Works using Davin Shearer method watson_ml_creds_auth_headers
+
+response <- httr::GET(paste("https://ibm-watson-ml.mybluemix.net/v3/wml_instances/",instance_id_WML,sep=""), authorization_headers_WML, encoding = 'UTF-8', httr::verbose())
+content(response, "text", encoding = "UTF-8")  # or encoding = "ISO-8859-1"
+content(response)
+## pull out response
+signal <- content(response)
+signal$entity$plan # what kind of WDC plan?
+signal$entity$owner$email # who is owner (email)
+signal$entity$usage$deployment_count$current # how many deployements on this instance? - add/check here in BMX - https://mlaas-dashboard.mybluemix.net/#/models
+
+
+
+#3  -- Published Models --  get /v3/wml_instances/{instance_id}/published_models  http://watson-ml-api.mybluemix.net/#/
+response <- httr::GET(paste("https://ibm-watson-ml.mybluemix.net/v3/wml_instances/",instance_id_WML,"/published_models",sep=""), authorization_headers_WML, encoding = 'UTF-8', httr::verbose())
+content(response, "text", encoding = "UTF-8")  # or encoding = "ISO-8859-1"
+content(response)
+## pull out response
+signal <- content(response)
+signal
+
+
+for (i in 1:length(signal$resources))
+{
+  cat("\n") #newline
+  print(paste("Model #",i))
+  print(paste("Model ID:",signal$resources[[i]]$entity$latest_version$guid))
+  print(paste("Meta ID:",signal$resources[[i]]$metadata$guid))
+  print(signal$resources[[i]]$entity$name)
+  print(signal$resources[[i]]$entity$description)
+  print(signal$resources[[i]]$entity$model_type)
+}
+
+# good to here
+
+ i=1
+# j=1
+
+#4 -- PUBLISHED MODELS -- Information of the specific published mode-- get /v3/wml_instances/{instance_id}/published_models/{published_model_id}
+for (i in 1:length(signal$resources))
+{
+  cat("\n") #newline
+  response <- httr::GET(paste("https://ibm-watson-ml.mybluemix.net/v3/wml_instances/",instance_id_WML,"/published_models/",signal$resources[[i]]$metadata$guid,sep=""), authorization_headers_WML, encoding = 'UTF-8')
+  signal2 <- content(response)
+  signal2
+  print(i)
+  print(signal2$entity$name[1]) # always 1
+  print(paste("Label Name: ",signal2$entity$label_col))
+  #signal2$entity$training_data_schema
+  #print(length(signal2$entity$input_data_schema$fields)) # works for 4 columns, not for 1
+
+  if(is.atomic(signal2$entity$input_data_schema))
+  {
+    print(paste("LABEL:",signal2$entity$label_col))
+  }
+  else{
+      q<-length(signal2$entity$input_data_schema$fields)
+       #Trouble with COlumns less than 2 count
+       for (j in 1:q){
+         print(paste("Column #",j,":",signal2$entity$input_data_schema$fields[[j]]$name))
+       }
+  }
+}
+
+
+ # good to here
+
+
+
+
+
+
+#5 -- DEPLOYMENTS & PREDICTIONS --
+## /v3/wml_instances/{instance_id}/published_models/{published_model_id}/deployments/{deployment_id}/online
+
+  # instance_id_WML is instance_id_WML from KEYS.R - 2aa3f5e0-51f5-4d02-bdbb-XXXXXXXX
+  # Published models : signal$resources[[i]]$metadata$guid (see above) - 116d1a1a-0914-4dda-865e-XXXXXXXXX
+  # Deployment ID - ?? 523de722-d8ab-4012-83dc-XXXXXXXX (SOURCE: got this from BMX Dashboard )  https://mlaas-dashboard.mybluemix.net/#/deployment/id?_k=04mady  - not sure if Callable from API
+   #Scoring Endpoint  (See abobe BMX WML dashboard)
+
+
+# GENDER,AGE,MARITAL_STATUS,PROFESSION,PRODUCT_LINE
+# M,27,Single,Professional,Personal Accessories
+
+response <- httr::POST(paste("https://ibm-watson-ml.mybluemix.net/v3/wml_instances/",
+                              instance_id_WML,
+                              "/published_models/",
+                              signal$resources[[1]]$metadata$guid,
+                              "/deployments/",
+                              deployment_id_WML,
+                              "/online",
+                              sep=""),
+                              authorization_headers_WML,
+                              httr::content_type_json(),
+                              body = '{"fields": ["GENDER","AGE","MARITAL_STATUS","PROFESSION"],
+                              "values": [
+                                  ["M",65,"Married","Executive"],
+                                  ["F",33,"Single","Professional"],
+                                  ["M",21,"Single","Professional"],
+                                  ["M",55,"Married","Executive"],
+                                  ["F",55,"Married","Professional"]
+                               ]}',
+                              encoding = 'UTF-8')
+response
+prediction <- content(response)
+prediction$values
+prediction$fields
+length(prediction$values) # count?
+
+# prediction$values[[4]][[12]]
+length(prediction)
+  for (k in 1:length(prediction$values)){
+    print(paste(prediction$values[k][[1]][1],prediction$values[k][[1]][2],prediction$values[k][[1]][3]," || Prediction:",prediction$values[[k]][[14]][1]))
+    }
+
+# Works! 200 - need to check what
+# [1] "M 65 Married  || Prediction: Golf Equipment"
+# [1] "F 33 Single  || Prediction: Personal Accessories"
+# [1] "M 21 Single  || Prediction: Camping Equipment"
+# [1] "M 55 Married  || Prediction: Golf Equipment"
+# [1] "F 55 Married  || Prediction: Personal Accessories"
+
+
+
