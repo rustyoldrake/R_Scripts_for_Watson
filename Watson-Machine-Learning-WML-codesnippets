@@ -22,13 +22,23 @@ url_WML = "https://ibm-watson-ml.mybluemix.net"
 source("keys.r") ## KEYS has acutal username:password for each IBM service.
 # OK Display Our Keys and Info - should all be populated
 url_WML       # e.g. "https://ibm-watson-ml.mybluemix.net"
-username_WML  # e.g. "d921144d-99d2-489b-bbcb-XXXXXXXXX"
-password_WML  # e.g.  "4bc0063e-7310-4645-84af-XXXXXXXXXX"
-username_password_WML
-access_key_WML  # e.g. "XXXXXXXXXXoi6fdc+9e8WbZDM+ZZQyyRKoXWp9peVGRlM1cs7+kbuUrfI0sllpbpxSFKe9cZoFYLlzgPf++qpWZYcXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-instance_id_WML # e.g. "2aa3f5e0-51f5-4d02-bdbb-XXXXXXXXXX" # AKA Deployment ID?
-deployment_id_WML #
 version="v3"
+username_WML  # e.g. "d921144d-99d2-489b-bbcb-XXXXXXXXX"    SOURCE: Bluemix Service Credentials
+password_WML  # e.g.  "4bc0063e-7310-4645-84af-XXXXXXXXXX"  SOURCE: Bluemix Service Credentials
+username_password_WML
+access_key_WML  # e.g. "XXXXXXXXXXoi6fdc+9e8WbZDM+ZZQyyRKoXWp9peVGRlM1cs7+kbuUrfI0sllpbpxSFKe9cZoFYLlzgPf++qpWZYcXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"   SOURCE: Bluemix Service Credentials
+instance_id_WML # e.g. "2aa3f5e0-51f5-4d02-bdbb-XXXXXXXXXX" # SOURCE: Bluemix Service Credentials
+deployment_id_WML # e.g. 523de722-d8ab-4012-83dc-XXXXXXXXXX # SOURCE: Deployment Overview https://mlaas-dashboard.mybluemix.net/#/deployments
+
+
+#' get_wml_auth_token() from R4WML
+get_wml_auth_token <- function(token_url, username, password) {
+  req <- httr::GET(token_url, httr::authenticate(username, password), encoding = 'UTF-8')
+  httr::stop_for_status(req, 'authenticate with WatsonML')
+  json <- jsonlite::fromJSON(httr::content(req, as = 'text', type = 'application/json', encoding = 'UTF-8'))
+  json$token
+}
+
 
 #1 -- TOKEN -- GET A TOKEN (And Confirm 200 Response)
 #Example of obtaining access token from Token Endpoint using HTTP Basic Auth (for details please refer to Token section below):
@@ -78,7 +88,7 @@ for (i in 1:length(signal$resources))
 
 # good to here
 
- i=1
+# i=1
 # j=1
 
 #4 -- PUBLISHED MODELS -- Information of the specific published mode-- get /v3/wml_instances/{instance_id}/published_models/{published_model_id}
