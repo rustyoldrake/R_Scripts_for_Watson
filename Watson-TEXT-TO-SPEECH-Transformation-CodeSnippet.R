@@ -158,14 +158,24 @@ for (i in seq(0,100,50)){
 voice <- voices[2,] ## 2    en-US_MichaelVoice
 voice <- voices[4,] ## 4    en-US_AllisonVoice
 
-for (i in seq(-80,80,40)){
-  print(paste("Number is:", i))
-  text <- URLencode(paste("<speak><voice-transformation type=\"Custom\" pitch=\"",i,"%\" pitch_range=\"",i,"%\" rate=\"",i,"%\" glottal_tension=\"",i,"%\" timbre=\"Sunrise\"> And you can combine all this with modifications of my speech rate and my tone. </voice-transformation></speak>"))
-  print(text)
-  filename <- "hal7.wav"
+for (i in seq(-80,80,20)){
+  script <- paste("This is my voice pitch and glottal tension level",i)
+  print(script)
+  text <- URLencode(paste("<speak><voice-transformation
+          type=\"Custom\"
+          pitch=\"",i,"%\"
+          pitch_range=\"",i,"%\"
+          rate=\"",0,"%\"
+          glottal_tension=\"",i,"%\"
+          timbre=\"Sunrise\"> \"",
+          script,
+          "</voice-transformation></speak>"))
+  #print(text)
+  filename <- "rising_tone.wav"
   watson.TTS.execute(url,text,voice,filename)
-  wait(5)
+  wait(3)
 }
+
 
 ## Other Features
 #timbre=\"Breeze\"
