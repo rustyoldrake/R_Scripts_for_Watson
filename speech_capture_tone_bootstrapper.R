@@ -6,10 +6,16 @@
 
 library(RCurl) # install.packages("RCurl") # if the package is not already installed
 library(httr)
-library(audio) 
+library(audio)
+library(stringr)  # string splitting
 
 # get keys
 source("keys.r") ## KEYS has acutal username:password for each IBM service. 
+
+## This next line sets CERT Global to make a CA Cert go away - http://stackoverflow.com/questions/15347233/ssl-certificate-failed-for-twitter-in-r
+options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")))
+Sys.setlocale(locale="C") # error: input string 1 is invalid in this locale
+options(warn=-1) # careful - turns off warnings
 
 
 # Speech-To-Text-Orange credentials" "RED": {
@@ -25,7 +31,7 @@ getwd()
 ### FUNCTION to test connectivity and return models available
 watson.speech_to_text.getmodels <- function()
 {return(GET(url=paste(url,"/v1/models",sep=""),
-            authenticate(username_STT,password)))}
+            authenticate(username_STT,password_STT)))}
 
 ### FOR BEST RESULTS - USE USB HEADSET and ensure in MAc > Sys Preferences >Sound it's selected
 
@@ -68,7 +74,7 @@ stt_transcript_only <- function(raw)
 ###### FUNCTION - ANalyze AUDIO WAV file with IBM Watson Speech to Text service - SESSIONLESS
 watson.speech_to_text.recognize <- function(audio_file)
 { return(POST(url=paste(url,"/v1/recognize",sep=""),
-              authenticate(username_STT,password),
+              authenticate(username_STT,password_STT),
               add_headers("Content-Type"="audio/wav"),
               body = (file = upload_file(audio_file))  
 ))} #works # hope this helps you with syntax!
@@ -101,25 +107,29 @@ watson.speech_to_text.sessionless <- function()
   return(stt_transcript_only(content(response,"text")))
 } 
 
-
 # TONE ZONE
 tidyResponse <- function(data)
 {
+  data
   data <- as.data.frame(strsplit(as.character(data),"\"score\""))
+  data
   data <- data[-c(1), ] # remove dud first row
+  data
   data  <- gsub("\"tone_id\":","",data)
   data  <- gsub(":","",data)
   data  <- gsub("\"","",data)
   data  <- gsub("_big5","",data)
   data <- data.frame(data)
   data
-  data <- data.frame(do.call('rbind', strsplit(as.character(data$data),',',fixed=TRUE)))
-  data <- data[,-c(3:6), ] # remove dud first row
-  data <- data[c("X2", "X1")]
+  
+  data <- data.frame(do.call('rbind', strsplit(as.character(data$data),',')))
+  data
+  data <- data[,-c(3:6), ] # remove unneeded columns 
+  
   data$X1 <- as.character.numeric_version(data$X1) # not sure why, but coercing to numbers requires this
   data$X1 <- as.numeric(data$X1)
   data$X1 <- round((data$X1),2)
-  setnames(data,c("trait","signal"))
+  setNames(data,c("signal","trait"))
   return(data)
 }
 
@@ -133,6 +143,7 @@ process_data_to_tone <- function(text)
                    add_headers("Content-Type"="text/plain","charset"="UTF-8"), 
                    body=text )
   response_text <- content(response, "text", encoding = "UTF-8")  # or encoding = "ISO-8859-1"
+  response_text
   abc <- tidyResponse(response_text)
   return(abc)
 }
@@ -159,15 +170,20 @@ while(w>0){
   
   # (3) tone enrich in columnn 2 -take dominant signal
   query <- URLencode(temp)
+  process_data_to_tone(query)
+  
   analysis <- process_data_to_tone(query) # pull TONE from TONE generic API
   analysis <- analysis[1:5,] # just grab these 5 for now
+  analysis
+  colnames(analysis) <- c("signal","trait")
   analysis <- analysis[rev(order(analysis$signal)),] # reorder big one on top
+  analysis
   if(analysis$signal[1]>.50){
     table[w,2] <- paste(analysis$trait[1])
   } else {table[w,2] <- c("neutral")} # crude way to clear second column
   
   # (4) Print updated table
-  table 
+  print(table) 
   w = w+1
 }
 
