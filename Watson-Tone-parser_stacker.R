@@ -1,5 +1,10 @@
 ## Parser Stacker - Rack and Stack
 ## https://stackoverflow.com/questions/15347282/split-delimited-strings-in-a-column-and-insert-as-new-rows
+## I tried this as test file: https://www.kaggle.com/rounakbanik/ted-talks/version/3  
+##  "These datasets contain information about all audio-video recordings of TED Talks uploaded to the official TED.com website until September 21st, 2017. The TED main dataset contains information about all talks including number of views, number of comments, descriptions, speakers and titles. The TED transcripts dataset contains the transcripts for all talks available on TED.com.
+## ted_main.csv - Contains data on actual TED Talk metadata and TED Talk speakers. and transcripts.csv - Contains transcript and URL information for TED Talks
+## The data has been scraped from the official TED Website and is available under the Creative Commons License.
+
 
 library(stringr)
 
