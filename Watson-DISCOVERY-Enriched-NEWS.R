@@ -109,7 +109,7 @@ response_text
 # response_text$configurations[[1]]$configuration_id
 configuration_ID_DISCO <- response_text$configurations[[1]]$configuration_id
 configuration_ID_DISCO # check we have it
-
+ 
 
 # 3b Use the POST /v1/environments/{environment_id}/collections method to create a collection called my-first-collection.
 # Replace {username}, {password}, {environment_id} and {configuration_id} with your information:
